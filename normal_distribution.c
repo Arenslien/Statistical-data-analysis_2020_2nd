@@ -34,6 +34,7 @@ double convert_alpha_to_z(double alpha)
 double standardization(double mu, double standard_deviation, double x, char inequality)
 {
 	double z = (x - mu)/standard_deviation;
+	printf("표준화 결과는 다음과 같습니다.\n");
 	if(inequality == '>') //x > mu => inequality = '>'
 	{ 	
 		printf("P(z > %.2lf)\n", z);
@@ -62,12 +63,12 @@ double probability_calculation(double z, char inequality)
 	if(inequality == '>')
 	{
 		result = 1-result;
-		printf("%.3lf\n", result);
+		printf("해당 통계량과 기준에 대한 확률 값은 %.3lf입니다.\n", result);
 	}
 	else {
-		printf("%.3lf\n", result);
+		printf("해당 통계량과 기준에 대한 확률 값은 %.3lf입니다.\n", result);
 	}
-		printf("%.3lf%%\n",100*result);
+		printf("해당 통계량과 기준에 대한 확률 값은 %.3lf%%입니다.\n",100*result);
 	return result;
 }
 
@@ -84,7 +85,7 @@ int sample_num_decision(double standard_error, double alpha, double standard_dev
 	double z = convert_alpha_to_z(alpha);
 
 	double number_of_sample = pow(z*standard_deviation/standard_error, 2);
-	printf("%d\n", ceil(number_of_sample));
+	printf("최소 %.0lf개의 표본을 준비해야 합니다.\n", ceil(number_of_sample));
 	return ceil(number_of_sample);
 }
 
@@ -93,13 +94,15 @@ int main(void)
 	int number;
 	do
 	{
+
 		printf("=====================================================\n");
 		printf("정규분포 관련 기능을 선택하여 수행할 수 있습니다.\n");
 		printf("1. 표준화\n");
 		printf("2. 정규분포 확률계산\n");
 		printf("3. 구간 추정\n");
 		printf("4. 표본 크기 결정\n");
-		printf("0. 종료");
+		printf("5. 종료\n");
+		START:
 		printf("=====================================================\n");
 		printf("수행할 기능의 번호를 입력해주세요: ");
 		scanf("%d", &number);
@@ -107,31 +110,82 @@ int main(void)
 		switch(number)
 		{
 			case 1:
+			{
+				double mu, standard_deviation, x;
+				char inequality;
+				printf("=====================================================\n");
 				printf("표준화를 위한 기본 통계량과 정보를 입력해주세요.\n");
+				printf("표본평균(μ)을 입력해주세요: ");
+				scanf("%lf", &mu);
+				printf("표준편차(σ)를 입력해주세요: ");
+				scanf("%lf", &standard_deviation);
+				printf("기준이 되는 확률변수(x)를  입력해주세요: ");
+				scanf("%lf", &x);
+				printf("부등호를 입력해주세요: ");
+				scanf("%s", &inequality);
+				
+				standardization(mu, standard_deviation, x, inequality);
 				break;
+			}
+				
 			case 2:
+			{
+				double mu, standard_deviation, x;
+				char inequality;
+				printf("=====================================================\n");
 				printf("정규분포 확률계산을 위한 기본 통계량과 정보를 입력해주세요.\n");
+				printf("표준화를 위한 기본 통계량과 정보를 입력해주세요.\n");
+				printf("표본평균(μ)을 입력해주세요: ");
+				scanf("%lf", &mu);
+				printf("표준편차(σ)를 입력해주세요: ");
+				scanf("%lf", &standard_deviation);
+				printf("기준이 되는 확률변수(x)를  입력해주세요: ");
+				scanf("%lf", &x);
+				printf("부등호를 입력해주세요: ");
+				scanf("%s", &inequality);
+				probability_calculation(standardization(mu, standard_deviation, x, inequality), inequality);
 				break;
+			}
 			case 3:
+			{
+				double mu, standard_deviation, alpha;
+				int n;
+				printf("=====================================================\n");
 				printf("구간추정을  위한 기본 통계량과 정보를 입력해주세요.\n");
+				printf("표본의 개수(n)를 입력해주세요: ");
+				scanf("%d", &n);
+				printf("표본평균(μ)을 입력해주세요: ");
+				scanf("%lf", &mu);
+				printf("표준편차(σ)를 입력해주세요: ");
+				scanf("%lf", &standard_deviation);
+				printf("신뢰도를(90, 95, 99, 99.9만 가능) 입력해주세요: ");
+				scanf("%lf", &alpha);
+				interval_estimation(n, mu, standard_deviation, alpha);
 				break;
+			}
 			case 4:
+			{
+				double standard_error, alpha, standard_deviation;
+				printf("=====================================================\n");
 				printf("표본 크기 결정을 위한 기본 통계량과 정보를 입력해주세요.\n");
+				printf("표준오차(SE)를 입력해주세요: ");
+				scanf("%lf", &standard_error);
+				printf("신뢰도를(90, 95, 99, 99.9만 가능) 입력해주세요: ");
+				scanf("%lf", &alpha);
+				printf("표준편차(σ)를 입력해주세요: ");
+				scanf("%lf", &standard_deviation);
+				sample_num_decision(standard_error, alpha, standard_deviation);
+				break;
+			}
+			case 5:
+				printf("=====================================================\n");
+				printf("정규분포 프로그램을 종료합니다.");
 				break;
 			default:
-				printf("올바른 입력이 아닙니다. 다시 입력해주세요."); 
+				printf("=====================================================\n");
+				printf("올바른 입력이 아닙니다. 다시 입력해주세요.\n");
+				goto START;
 		}
-	} while(number != 0);
-	//표준화
-	//구하고자 하는 확률을 표준정규분포로 변경하게 하는 기능
-
-	//정규분포 확률계산
-	probability_calculation(standardization(170, 10, 185, '>'), '>');
-	interval_estimation(200, 30000, 500, 95.0);
-	sample_num_decision(100, 99, 150);
-	//구간추정
-	
-	//표본의 크기 결정
-	
+	} while(number != 5);
 	return 0;
 }
