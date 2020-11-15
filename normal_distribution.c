@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <math.h>
 
+//알파 값을 z값에 매칭시켜주는 함수 
+//90, 95, 99, 99.9 값만 가능하다.
+//입력값 실수형 alpha값 ex) 90.0
+//출력값 입력에 대응되는 z값; 
 double convert_alpha_to_z(double alpha)
 {
 	double z = 0.0;
@@ -28,9 +32,8 @@ double convert_alpha_to_z(double alpha)
 }
 
 //표준화
-//평균, 기준 범위?, 표준편차
-//입력 해당 데이터의 표본평균, 표본표준편차, 범위기준, 크고 작음? 
-//결과 값은 없고 출력으로
+//입력 인자: 표본평균, 표준편차, 기준이 되는 확률변수(X), 부등호('>', '<') 범위에 해당되는 것은 지원 불가능
+//출력값: 확률변수를 표준정규분포에 대응되는 Z변수로 바꾼 값 
 double standardization(double mu, double standard_deviation, double x, char inequality)
 {
 	double z = (x - mu)/standard_deviation;
@@ -48,7 +51,10 @@ double standardization(double mu, double standard_deviation, double x, char ineq
 
 //정규분포의 확률계산
 //표준화를 활용해서 계산
-//표준정규분포표를 활용해서 값을 구하기만 하면됨 
+//적분을 활용하여 누적 확률값을 계산하는 함수
+//입력값: 확률변수 Z값, 부등호('>', '<')
+//출력값: 정규분포 확률
+//적분의 간격은 상수, 표준정규분포함수를 활용해 적분값 구함. 
 double probability_calculation(double z, char inequality)
 {
 	const double START_VALUE = -6.0; //6 시그마 기준
@@ -73,13 +79,17 @@ double probability_calculation(double z, char inequality)
 }
 
 //구간 추정
+//입력값: 표본개수, 표본평균, 표준편차, 신뢰도(알파)값
+//출력값: 없음 
 void interval_estimation(int n, double mu, double standard_deviation, double alpha)
 {
 	double z = convert_alpha_to_z(alpha);
 	printf("%.2lf < μ < %.2lf\n", mu-z*(standard_deviation/sqrt(n)), mu+z*(standard_deviation/sqrt(n)));
 }
 
-//표본의 크기 결정 
+//표본의 크기 결정
+//입력값: 표준오차, 신뢰도(알파)값, 표준편차
+//출력값: 최소 표본의 크기 
 int sample_num_decision(double standard_error, double alpha, double standard_deviation)
 {
 	double z = convert_alpha_to_z(alpha);
